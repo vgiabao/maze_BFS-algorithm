@@ -5,9 +5,9 @@ from sys import stderr, stdout
 class Graph:
     def __init__(self):
         self.nodes = []
-        self.batman = []
+        self.batman = ''
         self.target = []
-        self.near_list = [[1, 0], [-1, 0], [0, -1], [0, 1]]
+        self.near_list = ((1, 0), (-1, 0), (0, -1), (0, 1))
         self.trap = []
 
     def add_trap(self, node):
@@ -17,7 +17,7 @@ class Graph:
         self.nodes.append(node)
 
     def add_batman(self, node):
-        self.batman.append(node)
+        self.batman = node
 
     def add_target(self, node):
         self.target.append(node)
@@ -33,19 +33,19 @@ class Graph:
         return valid_list
 
     def finding_valid(self):
-        checked_point = [self.batman[0]]
-        player = self.batman[0]
-        valid_route = [self.batman[0]]
-        for extension in self.check_valid(self.batman[0], checked_point):
-            valid_route.append([self.batman[0]] + [extension])
+        checked_point = set([self.batman])
+        valid_route = [self.batman]
+        for extension in self.check_valid(self.batman, checked_point):
+            valid_route.append([self.batman]+ [extension])
+        checked_point.add(self.batman)
         valid_route.pop(0)
         for route in valid_route:
             if route[-1] in self.target:
                 return route
-        while valid_route[-1][-1] not in self.target:
+        while True:
             for extension in self.check_valid(valid_route[0][-1], checked_point):
                 valid_route.append(valid_route[0]+[extension])
                 if extension in self.target:
                     return valid_route[-1]
             valid_route.pop(0)
-
+            checked_point.add(valid_route[0][-1])
